@@ -9,7 +9,7 @@ if(WASMEDGE_PLUGIN_WASI_CRYPTO)
   add_subdirectory(wasi_crypto)
 endif()
 
-if(WASMEDGE_PLUGIN_PROCESS) 
+if(WASMEDGE_PLUGIN_PROCESS)
   # Only Linux systems support wasmedge_process now.
   if(CMAKE_SYSTEM_NAME MATCHES "Linux")
     add_subdirectory(wasmedge_process)
@@ -18,7 +18,7 @@ if(WASMEDGE_PLUGIN_PROCESS)
   endif()
 endif()
 
-if(WASMEDGE_PLUGIN_HTTPSREQ) 
+if(WASMEDGE_PLUGIN_HTTPSREQ)
   # Only Linux systems support wasmedge_httpsreq now.
   if(CMAKE_SYSTEM_NAME MATCHES "Linux")
     add_subdirectory(wasmedge_httpsreq)
@@ -34,4 +34,8 @@ if(WASMEDGE_PLUGIN_WASM_BPF)
   else()
     message(WARNING "Only Linux platforms support wasm_bpf plug-in now.")
   endif()
+endif()
+
+if(WASMEDGE_PLUGIN_OPENCVMINI)
+  add_subdirectory(wasmedge_opencvmini)
 endif()
