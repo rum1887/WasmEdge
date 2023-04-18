@@ -4,8 +4,10 @@
 #pragma once
 
 #include "common/defines.h"
+#include "common/errcode.h"
 #include "common/span.h"
 #include "host/wasi/error.h"
+#include <boost/align/aligned_allocator.hpp>
 #include <functional>
 #include <limits>
 #include <optional>
@@ -16,19 +18,8 @@
 #include <dirent.h>
 #include <sys/stat.h>
 #include <unordered_map>
-
-#include <boost/align/aligned_allocator.hpp>
-#endif
-
-#if WASMEDGE_OS_WINDOWS
-#include <boost/winapi/basic_types.hpp>
-
-#define WIN32_LEAN_AND_MEAN
-#include <Windows.h>
-
-#include <Pathcch.h>
-#include <Shlwapi.h>
-
+#elif WASMEDGE_OS_WINDOWS
+#include "system/winapi.h"
 #endif
 
 #if WASMEDGE_OS_LINUX
@@ -157,22 +148,54 @@ struct HandleHolder {
 
   constexpr HandleHolder() noexcept = default;
   ~HandleHolder() noexcept { reset(); }
-  explicit constexpr HandleHolder(boost::winapi::HANDLE_ Handle,
-                                  bool IsStdHandle = false) noexcept
-      : Handle(Handle), IsStdHandle(IsStdHandle) {}
+  explicit HandleHolder(winapi::HANDLE_ Handle,
+                        bool IsStdHandle = false) noexcept
+      : Handle(likely(Handle != winapi::INVALID_HANDLE_VALUE_) ? Handle
+                                                               : nullptr),
+        IsStdHandle(IsStdHandle) {}
   constexpr bool ok() const noexcept { return Handle != nullptr; }
   constexpr bool isStdHandle() const noexcept { return IsStdHandle; }
   void reset() noexcept;
-  boost::winapi::HANDLE_ release() noexcept {
-    return std::exchange(Handle, nullptr);
-  }
-  void emplace(boost::winapi::HANDLE_ NewHandle) noexcept {
+  winapi::HANDLE_ release() noexcept { return std::exchange(Handle, nullptr); }
+  void emplace(winapi::HANDLE_ NewHandle) noexcept {
     reset();
     Handle = NewHandle;
   }
   // TODO: move isSocket here
-  boost::winapi::HANDLE_ Handle = nullptr;
+  winapi::HANDLE_ Handle = nullptr;
   bool IsStdHandle = false;
+};
+
+struct FindHolder {
+  FindHolder(const FindHolder &) = delete;
+  FindHolder &operator=(const FindHolder &) = delete;
+  FindHolder(FindHolder &&RHS) noexcept {
+    using std::swap;
+    swap(Handle, RHS.Handle);
+    swap(Cookie, RHS.Cookie);
+  }
+  FindHolder &operator=(FindHolder &&RHS) noexcept {
+    using std::swap;
+    swap(Handle, RHS.Handle);
+    swap(Cookie, RHS.Cookie);
+    return *this;
+  }
+
+  FindHolder() noexcept = default;
+  explicit FindHolder(winapi::HANDLE_ H) noexcept : Handle(H) {}
+  constexpr bool ok() const noexcept { return Handle != nullptr; }
+  ~FindHolder() noexcept { reset(); }
+  void reset() noexcept;
+  void emplace(winapi::HANDLE_ NewHandler) noexcept {
+    reset();
+    Handle = NewHandler;
+  }
+
+  winapi::HANDLE_ Handle = nullptr;
+  uint64_t Cookie = 0;
+  std::vector<uint8_t, boost::alignment::aligned_allocator<
+                           uint8_t, alignof(__wasi_dirent_t)>>
+      Buffer;
 };
 #endif
 
@@ -683,8 +706,6 @@ public:
 private:
   friend class Poller;
 
-  __wasi_filetype_t unsafeFiletype() const noexcept;
-
 #if WASMEDGE_OS_LINUX || WASMEDGE_OS_MACOS
 public:
   using FdHolder::FdHolder;
@@ -694,6 +715,7 @@ private:
 
   DirHolder Dir;
 
+  __wasi_filetype_t unsafeFiletype() const noexcept;
   WasiExpect<void> updateStat() const noexcept;
 
 #elif WASMEDGE_OS_WINDOWS
@@ -701,13 +723,9 @@ public:
   using HandleHolder::HandleHolder;
 
 private:
-  mutable std::optional<BY_HANDLE_FILE_INFORMATION> FileInfo;
-  mutable std::optional<__wasi_oflags_t> SavedOpenFlags;
-  mutable std::optional<__wasi_fdflags_t> SavedFdFlags;
-  mutable std::optional<uint8_t> SavedVFSFlags;
+  __wasi_fdflags_t SavedFdFlags;
 
-  WasiExpect<void> updateFileInfo() const noexcept;
-
+  FindHolder Find;
 #endif
 };
 
