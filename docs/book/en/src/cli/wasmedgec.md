@@ -1,5 +1,7 @@
 # `wasmedgec` CLI
 
+# *This part has moved to https://wasmedge.org/docs/develop/build-and-run/aot. Please use our new docs.*
+
 After [installation](../quick_start/install.md), users can execute the `wasmedgec` tool with commands.
 
 ```bash
