@@ -1,5 +1,9 @@
 # Getting Started
 
+This part has moved to https://wasmedge.org/docs/develop/c/hello_world. Please use our new docs
+
+---
+
 This chapter describes how you can compile your C program to WebAssembly and then run it in WasmEdge runtime.
 
 ## Prerequisites
