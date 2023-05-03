@@ -1,5 +1,8 @@
 # Networking for HTTPS
 
+
+# This part have moved to https://wasmedge.org/docs/develop/rust/https-service. Please use our new docs*
+
 The WasmEdge WASI socket API supports HTTP networking in Wasm apps. In order to achieve the goal of supporting HTTPS requests with the same API as an HTTP request, we now create a WasmEdge plugin using the OpenSSL library. In this chapter, we will give the example of HTTPS requests and explain the design.
 
 ## Prerequisites
