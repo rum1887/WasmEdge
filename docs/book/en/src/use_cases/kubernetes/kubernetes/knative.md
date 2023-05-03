@@ -1,5 +1,9 @@
 # Knative
 
+This part has moved to https://wasmedge.org/docs/develop/deploy/use-case/knative. Please use our new docs.
+
+---
+
 Knative is a platform-agnostic solution for running serverless deployments.
 
 ## Quick start
