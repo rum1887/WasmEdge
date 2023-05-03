@@ -1,6 +1,6 @@
 # Supported Platforms
 
-# *This part has moved to https://wasmedge.org/docs/develop/wasmedge/features#cross-platform. Please use ur new docs*
+# *This part has moved to https://wasmedge.org/docs/develop/wasmedge/features#cross-platform. Please use our new docs*
 
 WasmEdge supports a wide range of operating systems and hardware platforms.
 It allows WebAssembly applications to be truly portable across platforms.
