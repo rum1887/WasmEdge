@@ -1,5 +1,8 @@
 # CRI-O
 
+
+This docs has moved to https://wasmedge.org/docs/develop/deploy/cri-runtime/cri-o-containerd
+
 ## Quick start
 
 The [GitHub repo](https://github.com/second-state/wasmedge-containers-examples/) contains scripts and Github Actions for running our example
