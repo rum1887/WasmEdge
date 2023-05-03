@@ -1,6 +1,6 @@
 # Knative
 
-This part has moved to https://wasmedge.org/docs/develop/deploy/use-case/knative. Please use our new docs.
+This part has moved to https://wasmedge.org/docs/develop/deploy/kubernetes/knative. Please use our new docs.
 
 ---
 
