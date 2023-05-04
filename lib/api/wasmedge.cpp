@@ -1638,6 +1638,19 @@ WasmEdge_ExecutorInvoke(WasmEdge_ExecutorContext *Cxt,
       FuncCxt);
 }
 
+WASMEDGE_CAPI_EXPORT WasmEdge_Async *
+WasmEdge_ExecutorAsyncInvoke(WasmEdge_ExecutorContext *Cxt,
+                             const WasmEdge_FunctionInstanceContext *FuncCxt,
+                             const WasmEdge_Value *Params,
+                             const uint32_t ParamLen) {
+  auto ParamPair = genParamPair(Params, ParamLen);
+  if (Cxt) {
+    return new WasmEdge_Async(fromExecutorCxt(Cxt)->asyncInvoke(
+        fromFuncCxt(FuncCxt), ParamPair.first, ParamPair.second));
+  }
+  return nullptr;
+}
+
 WASMEDGE_CAPI_EXPORT void
 WasmEdge_ExecutorDelete(WasmEdge_ExecutorContext *Cxt) {
   delete fromExecutorCxt(Cxt);
