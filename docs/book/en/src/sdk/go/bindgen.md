@@ -1,6 +1,6 @@
 # Embed a bindgen function
 
-This part has mived to https://wasmedge.org/docs/embed/go/bindgen. Please use our new docs.
+This part has moved to https://wasmedge.org/docs/embed/go/bindgen. Please use our new docs.
 
 ---
 
